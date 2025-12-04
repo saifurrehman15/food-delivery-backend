@@ -3,6 +3,8 @@
 
 # Environment variables
 .env
+*.env
 
 # Lock file
 package-lock.json
+
