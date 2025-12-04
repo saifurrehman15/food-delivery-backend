@@ -7,9 +7,10 @@ class USERMIDDLEWARE {
     this.#userService = userModel;
     this.authenticateUser = this.authenticateUser.bind(this);
   }
-  
+
   async authenticateUser(req, res, next) {
     const token = req.headers.authorization?.split(" ")[1];
+    console.log("TOKEN",token);
 
     if (!token) {
       return sendResponse(res, 401, {
@@ -40,10 +41,15 @@ class USERMIDDLEWARE {
       req.user = user;
       next();
     } catch (error) {
-      console.log(error);
-
-      return sendResponse(res, 401, {
-        message: "Unauthorized!",
+      if (error.name === "TokenExpiredError") {
+        return sendResponse(res, 401, {
+          message: "jwt expired",
+          data: null,
+          expiredAt: error.expiredAt,
+        });
+      }
+      return sendResponse(res, 500, {
+        message: "Internal Server Error",
         data: null,
       });
     }

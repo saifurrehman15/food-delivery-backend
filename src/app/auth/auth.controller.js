@@ -15,6 +15,9 @@ class AUTHCONTROLLER {
     this.#userService = authServiceModel;
     this.login = this.login.bind(this);
     this.register = this.register.bind(this);
+    this.refreshToken = this.refreshToken.bind(this);
+    this.forgetPassword = this.forgetPassword.bind(this);
+    this.changePassword = this.changePassword.bind(this);
   }
   // ** LOGIN CONTROLLER ** \\
   async login(req, res) {
@@ -43,7 +46,10 @@ class AUTHCONTROLLER {
         _id: loginResponse.data._id,
       };
       const { accessToken, refreshToken } = this.#tokenGenerate(payload);
-      const obj = { ...loginResponse.data };
+      const obj = {
+        ...loginResponse.data,
+        token: { accessToken, refreshToken },
+      };
       delete obj.password;
 
       console.log(loginResponse.data);
@@ -51,10 +57,6 @@ class AUTHCONTROLLER {
       return sendResponse(res, loginResponse.status, {
         message: loginResponse.message,
         data: obj,
-        token: {
-          accessToken,
-          refreshToken,
-        },
       });
     } catch (error) {
       console.log(error);
@@ -104,6 +106,104 @@ class AUTHCONTROLLER {
       });
     } catch (error) {
       console.log(error);
+
+      return sendResponse(res, 500, {
+        message: "Internal server error!",
+        data: null,
+      });
+    }
+  }
+
+  // ** REFRESH TOKEN CONTROLLER ** \\
+  async refreshToken(req, res) {
+    try {
+      const { user } = req;
+      const payload = {
+        email: user.email,
+        _id: user._id,
+      };
+
+      const { accessToken, refreshToken } = this.#tokenGenerate(payload);
+      delete user.password;
+      return sendResponse(res, 200, {
+        message: "Refresh token success!",
+        data: {
+          user,
+          token: {
+            accessToken,
+            refreshToken,
+          },
+        },
+      });
+    } catch (error) {
+      console.log(error);
+
+      return sendResponse(res, 500, {
+        message: "Internal server error!",
+        data: null,
+      });
+    }
+  }
+
+  // ** FORGET PASSWORD CONTROLLER ** \\
+  async forgetPassword(req, res) {
+    try {
+      const { email } = req.body;
+      const forgetPasswordResponse =
+        await this.#userService.forgetPasswordService(email);
+
+      if (forgetPasswordResponse.error) {
+        return sendResponse(res, forgetPasswordResponse.status, {
+          message: forgetPasswordResponse.message,
+          data: null,
+        });
+      }
+
+      return sendResponse(res, forgetPasswordResponse.status, {
+        message: forgetPasswordResponse.message,
+        data: null,
+      });
+    } catch (error) {
+      console.log(error);
+
+      return sendResponse(res, 500, {
+        message: "Internal server error!",
+        data: null,
+      });
+    }
+  }
+
+  // ** CHANGE PASSWORD CONTROLLER ** \\
+  async changePassword(req, res) {
+    try {
+      const { password } = req.body;
+      const changePasswordResponse =
+        await this.#userService.changePasswordService({
+          password,
+          token: req.query.token,
+        });
+
+      if (changePasswordResponse.error) {
+        return sendResponse(res, changePasswordResponse.status, {
+          message: changePasswordResponse.message,
+          data: null,
+        });
+      }
+
+      return sendResponse(res, changePasswordResponse.status, {
+        message: changePasswordResponse.message,
+        data: null,
+      });
+    } catch (error) {
+      console.log(error);
+      if (error.name === "TokenExpiredError") {
+        return sendResponse(res, 401, {
+          message:
+            "Your session has expired. Please request a new password reset link.",
+          data: null,
+          expiredAt: error.expiredAt,
+        });
+      }
 
       return sendResponse(res, 500, {
         message: "Internal server error!",
