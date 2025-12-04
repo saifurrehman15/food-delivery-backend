@@ -22,10 +22,7 @@ class AUTHCONTROLLER {
   // ** LOGIN CONTROLLER ** \\
   async login(req, res) {
     try {
-      console.log(req.body);
-
       const { error, value } = this.#userLoginValidator.validate(req.body);
-      console.log(value);
 
       if (error) {
         return sendResponse(res, 400, {
@@ -52,7 +49,6 @@ class AUTHCONTROLLER {
       };
       delete obj.password;
 
-      console.log(loginResponse.data);
 
       return sendResponse(res, loginResponse.status, {
         message: loginResponse.message,

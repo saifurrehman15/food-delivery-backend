@@ -20,18 +20,20 @@ class AUTHSERVICE {
         status: 404,
       };
     }
+    
+    if (findUser.account_type !== "google") {
+      const isPasswordMatch = await bcrypt.compare(
+        value.password,
+        findUser.password
+      );
 
-    const isPasswordMatch = await bcrypt.compare(
-      value.password,
-      findUser.password
-    );
-
-    if (!isPasswordMatch) {
-      return {
-        error: true,
-        message: "Invalid credientials!",
-        status: 400,
-      };
+      if (!isPasswordMatch) {
+        return {
+          error: true,
+          message: "Invalid credientials!",
+          status: 400,
+        };
+      }
     }
 
     return {

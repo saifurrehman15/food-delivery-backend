@@ -5,7 +5,6 @@ const userSchema = new mongoose.Schema(
     user_name: {
       type: String,
       required: true,
-      unique: true,
     },
     email: {
       type: String,
@@ -14,7 +13,11 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
+    },
+    account_type: {
+      type: String,
+      enum: ["google", "credentials"],
+      default: "credentials",
     },
     role: {
       type: String,
@@ -23,6 +26,10 @@ const userSchema = new mongoose.Schema(
     },
     token: {
       type: String,
+    },
+    avatar: {
+      type: mongoose.Schema.Types.Mixed,
+      default: null,
     },
   },
   { timestamps: true }

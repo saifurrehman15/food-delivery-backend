@@ -10,7 +10,7 @@ class USERMIDDLEWARE {
 
   async authenticateUser(req, res, next) {
     const token = req.headers.authorization?.split(" ")[1];
-    console.log("TOKEN",token);
+    console.log("TOKEN", token);
 
     if (!token) {
       return sendResponse(res, 401, {
@@ -48,6 +48,24 @@ class USERMIDDLEWARE {
           expiredAt: error.expiredAt,
         });
       }
+      return sendResponse(res, 500, {
+        message: "Internal Server Error",
+        data: null,
+      });
+    }
+  }
+
+  async isAdmin(req, res, next) {
+    try {
+      const { user } = req;
+      if (user.role !== "admin") {
+        return sendResponse(res, 403, {
+          message: "You need to be an admin to perform this action",
+          data: null,
+        });
+      }
+      next();
+    } catch (error) {
       return sendResponse(res, 500, {
         message: "Internal Server Error",
         data: null,
