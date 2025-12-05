@@ -1,8 +1,8 @@
 import express from "express";
 import { authControllerModule } from "../../app/auth/auth.controller.js";
-import { middlewareModule } from "../../app/middlewares/user.middleware.js";
 import passport from "passport";
 import { tokenGenerator } from "../../helpers/token-generator.js";
+import { middlewareModule } from "../../middlewares/user.middleware.js";
 
 const router = express.Router();
 

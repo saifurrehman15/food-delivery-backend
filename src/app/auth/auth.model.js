@@ -20,9 +20,17 @@ const userSchema = new mongoose.Schema(
       default: "credentials",
     },
     role: {
-      type: String,
+      type: [String],
       enum: ["admin", "user", "owner", "rider"],
-      default: "user",
+      default: ["user"],
+    },
+    registeration_payment_time: {
+      type: Date,
+      default: null,
+    },
+    isVerifiedOwner:{
+      type: Boolean,
+      default: false
     },
     token: {
       type: String,

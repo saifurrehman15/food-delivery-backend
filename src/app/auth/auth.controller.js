@@ -26,6 +26,7 @@ class AUTHCONTROLLER {
 
       if (error) {
         return sendResponse(res, 400, {
+          error: true,
           message: error.message,
           data: null,
         });
@@ -34,6 +35,7 @@ class AUTHCONTROLLER {
 
       if (loginResponse.error) {
         return sendResponse(res, loginResponse.status, {
+          error: true,
           message: loginResponse.message,
           data: null,
         });
@@ -51,6 +53,7 @@ class AUTHCONTROLLER {
 
 
       return sendResponse(res, loginResponse.status, {
+        error: false,
         message: loginResponse.message,
         data: obj,
       });
@@ -58,6 +61,7 @@ class AUTHCONTROLLER {
       console.log(error);
 
       return sendResponse(res, 500, {
+        error: true,
         message: "Internal server error!",
         data: null,
       });
@@ -71,6 +75,7 @@ class AUTHCONTROLLER {
 
       if (error) {
         return sendResponse(res, 400, {
+          error: true,
           message: error.message,
           data: null,
         });
@@ -79,6 +84,7 @@ class AUTHCONTROLLER {
 
       if (registerResponse.error) {
         return sendResponse(res, registerResponse.status, {
+          error: true,
           message: registerResponse.message,
           data: null,
         });
@@ -93,6 +99,7 @@ class AUTHCONTROLLER {
       delete obj.password;
 
       return sendResponse(res, registerResponse.status, {
+        error: false,
         message: registerResponse.message,
         data: obj,
         token: {
@@ -104,6 +111,7 @@ class AUTHCONTROLLER {
       console.log(error);
 
       return sendResponse(res, 500, {
+        error: true,
         message: "Internal server error!",
         data: null,
       });
@@ -122,6 +130,7 @@ class AUTHCONTROLLER {
       const { accessToken, refreshToken } = this.#tokenGenerate(payload);
       delete user.password;
       return sendResponse(res, 200, {
+        error: false,
         message: "Refresh token success!",
         data: {
           user,
@@ -135,6 +144,7 @@ class AUTHCONTROLLER {
       console.log(error);
 
       return sendResponse(res, 500, {
+        error: true,
         message: "Internal server error!",
         data: null,
       });
@@ -150,12 +160,14 @@ class AUTHCONTROLLER {
 
       if (forgetPasswordResponse.error) {
         return sendResponse(res, forgetPasswordResponse.status, {
+          error: true,
           message: forgetPasswordResponse.message,
           data: null,
         });
       }
 
       return sendResponse(res, forgetPasswordResponse.status, {
+        error: false,
         message: forgetPasswordResponse.message,
         data: null,
       });
@@ -163,6 +175,7 @@ class AUTHCONTROLLER {
       console.log(error);
 
       return sendResponse(res, 500, {
+        error: true,
         message: "Internal server error!",
         data: null,
       });
@@ -181,12 +194,14 @@ class AUTHCONTROLLER {
 
       if (changePasswordResponse.error) {
         return sendResponse(res, changePasswordResponse.status, {
+          error: true,
           message: changePasswordResponse.message,
           data: null,
         });
       }
 
       return sendResponse(res, changePasswordResponse.status, {
+        error: false,
         message: changePasswordResponse.message,
         data: null,
       });
@@ -194,6 +209,7 @@ class AUTHCONTROLLER {
       console.log(error);
       if (error.name === "TokenExpiredError") {
         return sendResponse(res, 401, {
+          error: true,
           message:
             "Your session has expired. Please request a new password reset link.",
           data: null,
@@ -202,6 +218,7 @@ class AUTHCONTROLLER {
       }
 
       return sendResponse(res, 500, {
+        error: true,
         message: "Internal server error!",
         data: null,
       });
